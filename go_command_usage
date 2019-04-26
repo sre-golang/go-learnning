@@ -1,0 +1,130 @@
+go命令详解
+
+
+一、go命令列表
+# go 
+
+    Usage:
+    	go command [arguments]
+    The commands are:
+    
+    	build       compile packages and dependencies  
+    	clean       remove object files
+    	doc         show documentation for package or symbol
+    	env         print Go environment information
+    	bug         start a bug report
+    	fix         run go tool fix on packages
+    	fmt         run gofmt on package sources
+    	generate    generate Go files by processing source
+    	get         download and install packages and dependencies
+    	install     compile and install packages and dependencies
+    	list        list packages
+    	run         compile and run Go program
+    	test        test packages
+    	tool        run specified go tool
+    	version     print Go version
+    	vet         run go tool vet on packages
+
+二、go build
+    此命令可直接使用,也可带上包名或者源码文件名。
+
+    直接使用表示编译当前包名,如果包不在GOPATH目录下，则会报错。
+    
+    标记:
+    -v 标记，可以把命令执行过程中构建的包名（包含编译过程中依赖的包）打印出来，如果 go build 的是一个源码文件，则会打印出的包名为 command-line-arguments，这是编译源码文件时生成的虚拟包名，所以看到不用觉得奇怪。
+
+　　-x 标记，可以打印编译期间所用到的所有 shell 命令。
+
+　　-o 标记，用来指定生成文件的路径和名称。
+
+　　-a 标记，强制重新编译。
+
+　　-buildmode=shared 标记，这个参数可以指定当前编译生成的结果类型，如静态库和动态库。GO语言默认使用静态编译，好处是部署时非常简单，但使用动态库，可以减少分发包的大小，大家可以根据实际情况选择。注意，目前在windows下尚不支持编译成动态库。
+    更多参数，请使用 go build -h 或 go help build 查看。
+
+三、go install
+    用于编译安装，可以作用于 main 包和非 main 包，然后将编译后的生成的执行文件存放到工程的 bin 目录下，将生成的归档文件（即静态链接库）存放到工程的 pkg 目录下。使用方式类似于 go build，可以在某个代码包目录下直接使用，也可以指定代码包使用。
+
+四、go run
+
+　　编译并执行，只能作用于命令源码文件，一般用于开发中快速测试。
+
+五、go clean
+    以删除执行其它命令时产生的文件和目录，不常用。
+
+六、go test
+    进行单元测试的工具，单元测试代码建议与被测试代码放在同一个代码包中，并以 "_test.go" 为后期，测试函数建议以 "Test" 为名称前缀。该命令可以对代码包进行测试，也可以指定某个测试代码文件运行（要一并带上被测试代码文件）。
+
+    一般常用测试命令：
+    go test -v  -test.run 测试函数
+    案例：go test -v -test.run Test_GetTodayForWeek
+
+七、go get
+    下载第三方代码包并编译安装 ，需要注意的是，它会下载安装到 GOPATH 环境变量配置的第一个工作区中。
+    注：如果某一个工作区中（不必是GOPATH 环境变量配置的第一个工作区中）已经存在该代码包，则不会重新下载。
+    
+八、go doc
+    文档注释相关，可以搭建本地GO文档服务器，包含自己的项目注释。
+    参考：https://github.com/hyper-carrot/go_command_tutorial/blob/master/0.5.md
+    
+    案例：# go doc http.Post
+            package http // import "net/http"
+    
+            func Post(url string, contentType string, body io.Reader) (resp *Response, err error)
+            Post issues a POST to the specified URL.
+    
+            Caller should close resp.Body when done reading from it.
+    
+            If the provided body is an io.Closer, it is closed after the request.
+    
+            Post is a wrapper around DefaultClient.Post.
+    
+            To set custom headers, use NewRequest and DefaultClient.Do.
+    
+            See the Client.Do method documentation for details on how redirects are handled.
+
+九、go list
+    显示指定包的导入路径。
+    案例：# go list net/http
+            net/http
+
+十、go fmt
+    作用于代码包，用于格式化代码包中的代码格式，注意不包含代码包中的子代码包。是 gofmt 的简单封装，相当于 gofmt -l -w ，更多信息，请通过 gofmt -h 查看。　
+
+十一、go fix
+    当GO语言版本升级之后，把代码包中旧的语法更新成新版本语法的自动化工具。它是 go tool fix 的简单封装，它作用于代码包。当需要升级自己的项目或者升级下载的第三方代码包，可以使用此方法。（下载并升级代码包可以使用 go get -fix 命令 ）
+
+十二、go vet
+    静态检查工具，一般项目快完成时进行进行优化时需要。
+
+十三、go tool pprof
+    性能检查工具，详见：https://github.com/hyper-carrot/go_command_tutorial/blob/master/0.12.md。
+
+十四、go tool cgo
+    跟C语言和GO语言有关的命令
+
+十五、go env
+    用于打印GO语言的环境信息，如 GOPATH 是工作区目录，GOROOT 是GO语言安装目录，GOBIN 是通过 go install 命令生成可执行文件的存放目录（默认是当前工作区的 bin 目录下），GOEXE 为生成可执行文件的后缀。
+    案例：# go env
+            GOARCH="amd64"
+            GOBIN="/usr/local/go/bin"
+            GOEXE=""
+            GOHOSTARCH="amd64"
+            GOHOSTOS="darwin"
+            GOOS="darwin"
+            GOPATH="/Users/yangguoqiang/Documents/project/"
+            GORACE=""
+            GOROOT="/usr/local/go"
+            GOTOOLDIR="/usr/local/go/pkg/tool/darwin_amd64"
+            GCCGO="gccgo"
+            CC="clang"
+            GOGCCFLAGS="-fPIC -m64 -pthread -fno-caret-diagnostics -Qunused-arguments -fmessage-length=0 -fdebug-prefix-map=/var/folders/kx/qnhlxn3d1jv3c8y77vznj9hh0000gn/T/go-build136937168=/tmp/go-build -gno-record-gcc-switches -fno-common"
+            CXX="clang++"
+            CGO_ENABLED="1"
+            CGO_CFLAGS="-g -O2"
+            CGO_CPPFLAGS=""
+            CGO_CXXFLAGS="-g -O2"
+            CGO_FFLAGS="-g -O2"
+            CGO_LDFLAGS="-g -O2"
+            PKG_CONFIG="pkg-config"
+    
