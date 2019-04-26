@@ -3,6 +3,19 @@
 Go官网下载地址：https://golang.org/dl/
 Go官方镜像站（推荐）：https://golang.google.cn/dl/
 
+一、mac安装
+第一种方法:
+1、从go官网获取安装包
+2、解压安装包,go的安装包是已经经过编译,直接解压即可
+# tar -C /usr/local/ -xzf go1.9.2.linux-amd64.tar.gz
+
+第二种方法:
+# brew install go
+或
+# brew install golang
+
+注：不建议使用第二种安装方式
+
 一、mac 下go环境配置
 GOROOT = /usr/local/go       //go安装路径
 GOBIN = /usr/local/go/bin    //go命令路径
@@ -28,4 +41,6 @@ GOPATH = /Users/yangguoqiang/Documents/project/      //go项目路径
   drwxr-xr-x  16 sf  staff   512  4 26 14:40 src                   //存放项目源码文件
 
 
-
+三、验证版本
+# go version
+go version go1.9.2 darwin/amd64
