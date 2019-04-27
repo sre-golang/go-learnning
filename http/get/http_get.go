@@ -281,7 +281,7 @@ func GetInfo(param1, param2, param3 string) (interface{}, error) {
 
 //main函数
 func main() {
-
+	//第一种方式
 	err := InitHttp()
 	if err != nil {
 		fmt.Printf("init http failed:%v\n", err)
@@ -293,6 +293,18 @@ func main() {
 	params["params3"] = "xxxx"
 
 	data, err := client.GetInformation(params)
+	if err != nil {
+		fmt.Printf("get info failed:%v\n", err)
+		return
+	}
+
+	fmt.Println(data)
+
+	//第二种方式
+	param1 := "xxx"
+	param2 := "xxx"
+	param3 := "xxx"
+	data, err := GetInfo(param1, param2, param3)
 	if err != nil {
 		fmt.Printf("get info failed:%v\n", err)
 		return
