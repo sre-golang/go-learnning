@@ -43,11 +43,16 @@ type HttpReq struct {
 	Data   int64 `json:"data"`
 }
 
-//Get请求
-
+//第一种Get请求方法
 func (s *HttpClient) GetInformation(params map[string]string) (interface{}, error) {
 
 	var result interface{}
+
+	//校验参数
+	if params == nil {
+		return nil, err
+	}
+
 	//此处可用配置库解析变量
 	url := fmt.Sprintf("http://xxx.xxx.xxx.xxx/api/vi/allinfo")
 
@@ -208,10 +213,65 @@ func (s *HttpClient) GetInformation(params map[string]string) (interface{}, erro
 
 	var httpreq HttpReq
 
-	//[]vyte转为struct
+	//[]byte转为struct
 	err = json.Unmarshal(data, &httpreq)
 	if err != nil {
 		return nil, err
+	}
+	//校验请求放回状态码，请求成功返回0，请求失败返回非0
+	if httpreq.ErrNo != 0 {
+		return nil, errors.New("get response failed")
+	}
+
+	result = httpreq.Data
+
+	return result, nil
+}
+
+//第二种Get请求方法
+func GetInfo(param1, param2, param3 string) (interface{}, error) {
+	if param1 == "" {
+		return nil, errors.New("param1 invalid")
+	}
+	if param2 == "" {
+		return nil, errors.New("param2 invalid")
+	}
+	if param3 == "" {
+		return nil, errors.New("param3 invalid")
+	}
+
+	var httpreq HttpReq
+	var result interface{}
+
+	url := fmt.Sprintf("http://xxx.xxx.xxx.xxx.xxx:xxx/xxx/xxx/xxx?xxxx=%s&xxxx=%s&xxxx=%s", param1, param2, param3)
+
+	//获取get请求方法结果
+	//func (c *Client) Get(url string) (resp *Response, err error)
+	//Get向指定的URL发出一个GET请求，如果回应的状态码如下，Get会在调用c.CheckRedirect后执行重定向：
+
+	//301 (Moved Permanently)
+	//302 (Found)
+	//303 (See Other)
+	//307 (Temporary Redirect)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	//func NewDecoder(r io.Reader) *Decoder
+	//Decode从输入流读取下一个json编码值并保存在v指向的值里，参见Unmarshal函数的文档获取细节信息。
+	//func (dec *Decoder) Decode(v interface{}) error
+	//Decode从输入流读取下一个json编码值并保存在v指向的值里，参见Unmarshal函数的文档获取细节信息。
+	err := json.NewDecoder(resp.Body).Decode(&httpreq)
+	if err != nil {
+		return nil, err
+	}
+
+	if httpreq.ErrNo != 0 {
+		return nil, errors.New("get response failed")
 	}
 
 	result = httpreq.Data
