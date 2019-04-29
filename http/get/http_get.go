@@ -38,9 +38,9 @@ func InitHttp() error {
 
 //定义响应体
 type HttpReq struct {
-	ErrNo  int64 `json:"errno"`
-	Errmsg int64 `json:"errmsg"`
-	Data   int64 `json:"data"`
+	ErrNo  int64  `json:"errno"`
+	Errmsg string `json:"errmsg"`
+	Data   string `json:"data"`
 }
 
 //第一种Get请求方法
